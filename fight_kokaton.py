@@ -188,7 +188,7 @@ def main():
         for i,bomb in enumerate(bombs):
             if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合
                 if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
-                    bombs[i] = None                         #ビームとボムを消す
+                    bombs[i] = None                     #ビームとボムを消す
                     beam = None
                     bird.change_img(9,screen)           #happyこうかとんの表示
                     score.point += 1                    #スコアをインクリメント
