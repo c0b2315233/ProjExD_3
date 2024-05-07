@@ -170,10 +170,11 @@ def main():
     bird = Bird((900, 400))
     #bomb = Bomb((255, 0, 0), 10)
     bombs=[]
+    beams=[]
     for i in range(NUM_OF_BOMBS):
         bombs.append(Bomb((255, 0, 0), 10))
     i=0
-    beam = None
+    #beam = None
     clock = pg.time.Clock()
     tmr = 0
     score=Score()
@@ -182,19 +183,20 @@ def main():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                beam = Beam(bird)
+                beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
         
         for i,bomb in enumerate(bombs):
-            if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合
-                if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
-                    bombs[i] = None                     #ビームとボムを消す
-                    beam = None
-                    bird.change_img(9,screen)           #happyこうかとんの表示
-                    score.point += 1                    #スコアをインクリメント
-                    pg.display.update()                 #画面切り替え
+            for j,beam in enumerate(beams):
+                if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合
+                    if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
+                        bombs[i] = None                         #ビームとボムを消す
+                        beams[j] = None
+                        bird.change_img(9,screen)           #happyこうかとんの表示
+                        score.point += 1                    #スコアをインクリメント
+                        pg.display.update()                 #画面切り替え
         bombs = [bomb for bomb in bombs if bomb is not None]
-
+        beams = [beam for beam in beams if beam is not None]
         if bomb is not None:
             if bird.rct.colliderect(bomb.rct):
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
@@ -212,10 +214,14 @@ def main():
         bird.update(key_lst, screen)
         for bomb in bombs:
             bomb.update(screen)
-        if beam is not None:
-            beam.update(screen)
-        score.update(screen)
-        pg.display.update()
+        for beam in beams:
+            if beam is not None:
+                beam.update(screen)
+            if beam.rct.x > WIDTH and beam is not None:
+                beam = None
+        #beams = [beam for beam in beams if beam is not None]
+        score.update(screen) 
+        pg.display.update() 
         tmr += 1
         clock.tick(50)
 
