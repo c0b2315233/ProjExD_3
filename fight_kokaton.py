@@ -9,6 +9,7 @@ WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+NUM_OF_BOMBS=5  #爆弾の数
 
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
@@ -145,7 +146,11 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((900, 400))
-    bomb = Bomb((255, 0, 0), 10)
+    #bomb = Bomb((255, 0, 0), 10)
+    bombs=[]
+    for i in range(NUM_OF_BOMBS):
+        bombs.append(Bomb((255, 0, 0), 10))
+    i=0
     beam = None
     clock = pg.time.Clock()
     tmr = 0
@@ -157,12 +162,14 @@ def main():
                 beam = Beam(bird)
         screen.blit(bg_img, [0, 0])
         
-        if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合 
-            if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
-                bomb = None                         #ビームとボムを消す
-                beam = None
-                bird.change_img(9,screen)           #happyこうかとんの表示
-                pg.display.update()                 #画面切り替え
+        for i,bomb in enumerate(bombs):
+            if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合
+                if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
+                    bombs[i] = None                         #ビームとボムを消す
+                    beam = None
+                    bird.change_img(9,screen)           #happyこうかとんの表示
+                    pg.display.update()                 #画面切り替え
+        bombs = [bomb for bomb in bombs if bomb is not None]
 
         if bomb is not None:
             if bird.rct.colliderect(bomb.rct):
@@ -179,7 +186,7 @@ def main():
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        if bomb is not None:
+        for bomb in bombs:
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
