@@ -24,7 +24,14 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
-
+class explosion :
+    """
+    爆破処理に関するクラス
+    """
+    life=0
+    def __init__(self) -> None:
+        pass
+    
 class Bird:
     """
     ゲームキャラクター（こうかとん）に関するクラス
@@ -150,16 +157,16 @@ class Score :
         """
         点数の初期設定
         """
-        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
-        self.color = (0,0,255)
-        self.xy = (100,HEIGHT-50)
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)      #フォントの指定
+        self.color = (0,0,255)                                   #色の設定
+        self.xy = (100,HEIGHT-50)                               #場所の指定
     
     def update(self, screen: pg.surface):
         """
         点数の表示
         引数 screen:画面surface
         """
-        self.img = self.fonto.render(f"スコア:{self.point}" ,0 ,self.color)
+        self.img = self.fonto.render(f"スコア:{self.point}" ,0 ,self.color)         #スコアの表示
         screen.blit(self.img, self.xy)
 
 
@@ -186,17 +193,17 @@ def main():
                 beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
         
-        for i,bomb in enumerate(bombs):
-            for j,beam in enumerate(beams):
-                if beam is not None and bomb is not None:   #bomb,beamインスタンスが存在する場合
-                    if beam.rct.colliderect(bomb.rct):      #爆弾とビームが当たった場合
+        for i,bomb in enumerate(bombs):                         #複数のボムの確認
+            for j,beam in enumerate(beams):                     #複数のビームの確認
+                if beam is not None and bomb is not None:       #bomb,beamインスタンスが存在する場合
+                    if beam.rct.colliderect(bomb.rct):          #爆弾とビームが当たった場合
                         bombs[i] = None                         #ビームとボムを消す
                         beams[j] = None
-                        bird.change_img(9,screen)           #happyこうかとんの表示
-                        score.point += 1                    #スコアをインクリメント
-                        pg.display.update()                 #画面切り替え
-        bombs = [bomb for bomb in bombs if bomb is not None]
-        beams = [beam for beam in beams if beam is not None]
+                        bird.change_img(9,screen)               #happyこうかとんの表示
+                        score.point += 1                        #スコアをインクリメント
+                        pg.display.update()                     #画面切り替え
+        bombs = [bomb for bomb in bombs if bomb is not None]    #None状態のビームとボムを消去
+        beams = [beam for beam in beams if beam is not None]    
         if bomb is not None:
             if bird.rct.colliderect(bomb.rct):
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
@@ -212,15 +219,15 @@ def main():
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        for bomb in bombs:
+        for bomb in bombs:                                     
             bomb.update(screen)
-        for beam in beams:
-            if beam is not None:
+        for beam in beams:                                      #複数のビームを確認
+            if beam is not None:                                #Noneではないビームのみアップデートする
                 beam.update(screen)
-            if beam.rct.x > WIDTH and beam is not None:
+            if beam.rct.x > WIDTH and beam is not None:         #画面外に出た場合Noneにする
                 beam = None
         #beams = [beam for beam in beams if beam is not None]
-        score.update(screen) 
+        score.update(screen)                              
         pg.display.update() 
         tmr += 1
         clock.tick(50)
