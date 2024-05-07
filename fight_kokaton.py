@@ -141,6 +141,28 @@ class Beam :
             self.rct.move_ip(self.vx, self.vy)
             screen.blit(self.img, self.rct)
 
+class Score :
+    """
+    点数表示に関するクラス
+    """
+    point=0
+    def __init__(self):
+        """
+        点数の初期設定
+        """
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.color = (0,0,255)
+        self.xy = (100,HEIGHT-50)
+    
+    def update(self, screen: pg.surface):
+        """
+        点数の表示
+        引数 screen:画面surface
+        """
+        self.img = self.fonto.render(f"スコア:{self.point}" ,0 ,self.color)
+        screen.blit(self.img, self.xy)
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -154,6 +176,7 @@ def main():
     beam = None
     clock = pg.time.Clock()
     tmr = 0
+    score=Score()
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -168,6 +191,7 @@ def main():
                     bombs[i] = None                         #ビームとボムを消す
                     beam = None
                     bird.change_img(9,screen)           #happyこうかとんの表示
+                    score.point += 1                    #スコアをインクリメント
                     pg.display.update()                 #画面切り替え
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -190,6 +214,7 @@ def main():
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
+        score.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
