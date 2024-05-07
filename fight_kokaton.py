@@ -27,6 +27,7 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
 class explosion :
     """
     爆破処理に関するクラス
+    戻り値:無し
     """
     life=0
     def __init__(self) -> None:
